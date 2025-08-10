@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pawfect Organics — Nutrition Quiz & Shop</title>
+  <meta name="description" content="Personalized organic dog nutrition quiz — premium plans, affordable packs, and DIY cookbook." />
+  <style>
+    :root{
+      --brand:#2d8659; --accent:#ff9f1c; --muted:#6b7280; --card:#fff;
+      --maxw:900px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:#fbfbfb;color:#111;display:flex;align-items:flex-start;justify-content:center;padding:18px;}
+    .wrap{width:100%;max-width:var(--maxw);}
+    header{background:linear-gradient(90deg,var(--brand),#1f7a4b);color:#fff;padding:18px;border-radius:10px}
+    header h1{margin:0;font-size:1.25rem}
+    header p{margin:6px 0 0;font-size:0.95rem;opacity:0.95}
+    main{margin-top:18px}
+    .card{background:var(--card);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(17,24,39,0.06);margin-bottom:14px}
+    label{display:block;font-weight:600;margin:8px 0 6px}
+    input[type="text"], input[type="number"], select, textarea {
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6e8eb;font-size:0.98rem;
+    }
+    .row{display:flex;gap:10px}
+    .row .col{flex:1}
+    .small{font-size:0.85rem;color:var(--muted);margin-top:6px}
+    button.primary{background:var(--brand);color:#fff;padding:12px 14px;border-radius:8px;border:none;font-weight:700;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid #e6e8eb;padding:10px 12px;border-radius:8px;cursor:pointer}
+    .result{margin-top:12px}
+    h2{margin:6px 0 12px}
+    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .product{border-radius:8px;padding:12px;background:linear-gradient(180deg,#ffffff,#fbfff8);border:1px solid #eef2ed}
+    .product h3{margin:6px 0}
+    .product p{margin:6px 0;color:var(--muted);font-size:0.95rem}
+    .badge{display:inline-block;font-size:0.8rem;padding:4px 8px;border-radius:999px;background:#f1f5f9;color:#0f172a}
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:0.9rem}
+    @media (max-width:520px){ header h1{font-size:1.05rem} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card">
+      <h1>🐾 Pawfect Organics — Nutrition Quiz</h1>
+      <p>Answer a few quick questions — get a science-backed plan and product picks. Email capture + buy links included.</p>
+    </header>
+
+    <!-- QUIZ -->
+    <main>
+      <section id="quizCard" class="card" aria-labelledby="quizHeading">
+        <h2 id="quizHeading">Quick Dog Nutrition Assessment</h2>
+        <form id="quizForm">
+          <label for="dogName">Dog's name</label>
+          <input id="dogName" name="dogName" type="text" placeholder="Buddy" required>
+
+          <div class="row">
+            <div class="col">
+              <label for="breed">Breed</label>
+              <input id="breed" name="breed" type="text" placeholder="Labrador, Mixed, etc." required>
+            </div>
+            <div class="col">
+              <label for="age">Age (years)</label>
+              <input id="age" name="age" type="number" min="0" step="0.1" placeholder="3.5" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="weight">Weight (lbs)</label>
+              <input id="weight" name="weight" type="number" min="1" step="0.1" placeholder="55" required>
+            </div>
+            <div class="col">
+              <label for="activity">Activity level</label>
+              <select id="activity" name="activity" required>
+                <option value="">Select</option>
+                <option value="low">Low (couch)</option>
+                <option value="moderate">Moderate (walks/play)</option>
+                <option value="high">High (athletic)</option>
+              </select>
+            </div>
+          </div>
+
+          <label for="allergies">Known allergies / sensitivities (choose comma-separated)</label>
+          <input id="allergies" name="allergies" type="text" placeholder="chicken, wheat, dairy (or leave blank)">
+
+          <label for="goal">Primary goal</label>
+          <select id="goal" name="goal" required>
+            <option value="">Select goal</option>
+            <option value="weight_loss">Weight loss</option>
+            <option value="muscle_gain">Muscle gain / energy</option>
+            <option value="joint_health">Joint health / mobility</option>
+            <option value="skin_coat">Skin & coat</option>
+            <option value="digestive">Digestive health</option>
+            <option value="general">General wellness</option>
+          </select>
+
+          <label for="ownerPref">Owner preference</label>
+          <select id="ownerPref" name="ownerPref">
+            <option value="premium">Premium (best quality, subscription)</option>
+            <option value="value">Lower tier (budget-friendly organic)</option>
+            <option value="diy">DIY Cookbook only</option>
+          </select>
+
+          <label for="email">Email (we'll send the personalized plan)</label>
+          <input id="email" name="email" type="text" placeholder="you@domain.com" required>
+          <div class="small">We respect privacy — we only send your dog's plan and product links.</div>
+
+          <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+            <button class="primary" type="submit">Get My Personalized Plan</button>
+            <button type="button" class="ghost" id="clearBtn">Clear</button>
+          </div>
+        </form>
+
+        <div id="processing" style="display:none;margin-top:12px">Processing results…</div>
+      </section>
+
+      <!-- RESULT / RECOMMENDATIONS -->
+      <section id="resultCard" class="card" style="display:none" aria-live="polite">
+        <h2>Personalized Plan</h2>
+        <div id="personalSummary"></div>
+
+        <div id="nutrientSummary" style="margin-top:12px"></div>
+
+        <h3 style="margin-top:14px">Recommended Options</h3>
+        <div style="margin:8px 0" class="small">Choose one — each product card lists benefits and proof.</div>
+
+        <div class="products" id="productList"></div>
+
+        <div style="margin-top:12px">
+          <button id="emailDownload" class="primary">Email Plan & Download (PDF)</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="small">
+      <div>© Pawfect Organics — Built for mobile. Replace Stripe links & Apps Script URL in the code before going live.</div>
+    </footer>
+  </div>
+
+  <script>
+    /* ------------------------------
+       CONFIG - Replace these
+       ------------------------------ */
+    const CONFIG = {
+      stripePremium: "YOUR_STRIPE_LINK_PREMIUM",   // hosted Stripe Checkout URL for Premium subscription/bundle
+      stripeLower:   "YOUR_STRIPE_LINK_LOWER",     // hosted Stripe Checkout URL for Lower tier product
+      stripeCook:    "YOUR_STRIPE_LINK_COOKBOOK",  // hosted Stripe Checkout URL for eBook purchase
+      appsScriptUrl: "YOUR_APPS_SCRIPT_ENDPOINT"   // Google Apps Script web app URL to POST leads to Sheets
+    };
+
+    /* ------------------------------
+       Ingredient -> benefit mini DB (sample)
+       Expand as needed (we'll tie 50 ingredients later)
+       ------------------------------ */
+    const INGREDIENT_DB = {
+      "pumpkin": {benefit:"Supports digestion & stool consistency", proof:"High soluble fiber shown to normalize stool (AKC, 2023)"},
+      "salmon":  {benefit:"Omega-3s for skin, coat & joint health", proof:"EPA/DHA reduces inflammation (Vet Derm Journal, 2022)"},
+      "turmeric":{benefit:"Anti-inflammatory for joint support", proof:"Curcumin reduces arthritis pain (Front Vet Sci, 2019)"},
+      "sweet potato":{benefit:"Slow carbs + fiber for steady energy", proof:"Complex carbs support glycemic control (WDJ, 2020)"},
+      "probiotics":{benefit:"Balances gut microbiome & stool quality", proof:"Improves stool & digestion (J Applied Micro, 2021)"}
+      // add more rows up to 50 in final DB
+    };
+
+    /* ------------------------------
+      Utility functions
+       ------------------------------ */
+    function calcMER(weightLbs, activity){
+      // quick, defensible calorie estimate:
+      // Resting Energy Requirement (RER) = 70 * (kg^0.75)
+      // MER = RER * activity factor
+      const kg = weightLbs * 0.453592;
+      const rer = 70 * Math.pow(kg, 0.75);
+      let factor = 1.6; // default moderate
+      if(activity === "low") factor = 1.2;
+      if(activity === "high") factor = 2.0;
+      return Math.round(rer * factor);
+    }
+
+    function sanitizeList(s){
+      if(!s) return [];
+      return s.split(",").map(x=>x.trim().toLowerCase()).filter(Boolean);
+    }
+
+    function chooseProducts(profile){
+      // lightweight decision engine — replace with richer mapping as you add product catalog
+      // returns a list of product objects: {title, price, benefits, proof, buyLink, tag}
+      const prods = [];
+      // Premium option
+      prods.push({
+        title: "Premium Joint & Nutrition Bundle (Subscription)",
+        price: "$49/mo",
+        benefits: [
+          "High-quality salmon & turkey formulas",
+          "Added turmeric and glucosamine",
+          "Monthly delivery (subscribe & save)"
+        ],
+        proof: "Targets inflammation and joint health. Ingredients: salmon, turmeric, glucosamine.",
+        buyLink: CONFIG.stripePremium,
+        tag: "premium"
+      });
+
+      // Lower tier
+      prods.push({
+        title: "Organic Starter Pack (Single purchase)",
+        price: "$29",
+        benefits: [
+          "Balanced organic kibble sample",
+          "Two treat packs (salmon + pumpkin)"
+        ],
+        proof: "Balanced calories and gentle ingredients for most adult dogs.",
+        buyLink: CONFIG.stripeLower,
+        tag: "value"
+      });
+
+      // Cookbook
+      prods.push({
+        title: "DIY Organic Cookbook (Digital PDF)",
+        price: "$9",
+        benefits: [
+          "50+ recipes tailored to age, size & goals",
+          "Step-by-step meal plans + shopping list"
+        ],
+        proof: "Recipes use vet-friendly ingredient combos and portion guidance.",
+        buyLink: CONFIG.stripeCook,
+        tag: "diy"
+      });
+
+      // Filter/adjust by allergies
+      if(profile.allergies.includes("fish")){
+        // remove products that emphasize fish: show alternate
+        prods.forEach(p=>{
+          p.title = p.title.replace(/salmon|fish/gi, "chicken");
+        });
+      }
+      if(profile.goal === "weight_loss"){
+        // emphasize weight-friendly product first
+        prods.sort((a,b)=> (a.tag==="premium" ? -1 : 0));
+      }
+      return prods;
+    }
+
+    /* ------------------------------
+      Form handling & flow
+       ------------------------------ */
+    const form = document.getElementById('quizForm');
+    const processingEl = document.getElementById('processing');
+    const resultCard = document.getElementById('resultCard');
+    const personalSummary = document.getElementById('personalSummary');
+    const nutrientSummary = document.getElementById('nutrientSummary');
+    const productList = document.getElementById('productList');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      processingEl.style.display = "block";
+
+      const data = {
+        name: document.getElementById('dogName').value.trim(),
+        breed: document.getElementById('breed').value.trim(),
+        age: parseFloat(document.getElementById('age').value),
+        weight: parseFloat(document.getElementById('weight').value),
+        activity: document.getElementById('activity').value,
+        allergies: sanitizeList(document.getElementById('allergies').value),
+        goal: document.getElementById('goal').value,
+        ownerPref: document.getElementById('ownerPref').value,
+        email: document.getElementById('email').value.trim()
+      };
+
+      // Basic validation
+      if(!data.email || !data.name || !data.breed){ alert("Please complete required fields."); processingEl.style.display="none"; return; }
+
+      // Compute calories
+      data.calories = calcMER(data.weight, data.activity);
+
+      // Build nutrient summary (short)
+      let nutrientText = `Estimated daily calories: ${data.calories} kcal. Recommended: balanced protein (20-30%), healthy fats (10-15%), fiber for gut health.`;
+      // Custom tips: goal-specific
+      const goalTips = {
+        weight_loss: "Reduce overall calories by ~10-20% and prioritize high protein & fiber.",
+        muscle_gain: "Increase high-quality protein; consider lean meat sources and controlled fats.",
+        joint_health: "Add omega-3 rich sources (salmon, flax) and turmeric-containing extras.",
+        skin_coat: "Prioritize Omega-3s (salmon), vitamin E, and avoid common allergens.",
+        digestive: "Add digestible carbs (sweet potato), pumpkin, and probiotics.",
+        general: "Balanced organic diet with rotation of proteins and seasonal veg."
+      };
+
+      // Compose profile
+      const profile = data; // for now
+      profile.tips = goalTips[data.goal] || goalTips.general;
+
+      // Choose product list
+      const prods = chooseProducts(profile);
+
+      // Render results
+      personalSummary.innerHTML = `
+        <strong>${data.name} (${data.breed})</strong><br>
+        Age: ${data.age} yrs • Weight: ${data.weight} lbs • Activity: ${data.activity}<br>
+        Primary goal: ${data.goal.replace("_"," ")}
+      `;
+      nutrientSummary.innerHTML = `<p><strong>Quick nutrition summary:</strong> ${nutrientText}</p><p><strong>Targeted tip:</strong> ${profile.tips}</p>`;
+
+      // Render product cards
+      productList.innerHTML = "";
+      prods.forEach(p => {
+        const div = document.createElement('div');
+        div.className = "product";
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>${p.title}</h3><span class="badge">${p.price}</span>
+          </div>
+          <p>${p.benefits.join(" • ")}</p>
+          <p class="small"><em>${p.proof}</em></p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <a class="primary" style="text-decoration:none" href="${p.buyLink}" target="_blank" rel="noreferrer">Buy / Subscribe</a>
+            <button class="ghost" onclick="showMore('${encodeURIComponent(JSON.stringify(p))}')">More</button>
+          </div>
+        `;
+        productList.appendChild(div);
+      });
+
+      // Show results
+      resultCard.style.display = "block";
+      processingEl.style.display = "none";
+
+      // Save lead + quiz data to Google Sheets (Apps Script)
+      if(CONFIG.appsScriptUrl && CONFIG.appsScriptUrl !== "YOUR_APPS_SCRIPT_ENDPOINT"){
+        try {
+          await fetch(CONFIG.appsScriptUrl, {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(data)
+          });
+          // silent succeed
+        } catch(err){
+          console.warn("Could not send lead to Apps Script", err);
+        }
+      } else {
+        console.log("Apps Script endpoint not configured - set CONFIG.appsScriptUrl");
+      }
+    });
+
+    // helper showMore
+    window.showMore = (enc) => {
+      const p = JSON.parse(decodeURIComponent(enc));
+      alert(`${p.title}\n\nBenefits:\n- ${p.benefits.join("\n- ")}\n\nProof:\n${p.proof}`);
+    };
+
+    // Clear
+    document.getElementById('clearBtn').addEventListener('click', () => form.reset());
+
+    // Email download (placeholder - you can integrate PDF generation later)
+    document.getElementById('emailDownload').addEventListener('click', ()=>{
+      alert("We will email the full plan (PDF) to the address you provided. (Set up automated email via Apps Script later.)");
+      // Optionally trigger Apps Script email workflow here if configured.
+    });
+  </script>
+</body>
+</html>
